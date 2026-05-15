@@ -1,0 +1,17 @@
+# Vivado generated project (rebuild with: vivado -mode batch -source vivado/build.tcl)
+vivado/project_1/
+
+# Vivado logs and temp files
+*.log
+*.jou
+*.pb
+*.vsp
+*.str
+.Xil/
+NA/
+
+# Webtalk
+usage_statistics_webtalk.html
+usage_statistics_webtalk.xml
+webtalk.log
+webtalk.jou
