@@ -4,8 +4,12 @@ EBAZ4205 + hellofpga IO board + OV5640 camera → HDMI output
 
 ## Status
 
-- [x] 프로젝트 생성
-- [ ] OV5640 테스트 미완성
+- [x] 프로젝트 생성 (2026-05-15)
+- [x] HDMI 컬러바 출력 확인 (5색: White / Yellow / Cyan / Green / Purple)
+- [ ] OV5640 영상 미확인
+  - vsync 미감지 → camera_active=0 유지 → 컬러바만 출력
+  - OV5640은 XCLK 필수. 카메라 모듈 내장 오실레이터 유무 확인 필요
+  - FPGA에서 24MHz XCLK 공급 추가 (J18 핀, 2026-05-22)
 
 - OV5640 DVP 1280x720 RGB565 → 3:1 subsample → 320x240 BRAM → 2x upscale → 640x480
 - HDMI output via rgb2dvi (Digilent)

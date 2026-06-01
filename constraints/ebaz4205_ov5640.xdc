@@ -23,8 +23,8 @@ set_property -dict {PACKAGE_PIN B19 IOSTANDARD TMDS_33} [get_ports {HDMI_P[2]}]
 set_property -dict {PACKAGE_PIN M17 IOSTANDARD LVCMOS33} [get_ports ov5640_vsync]
 set_property -dict {PACKAGE_PIN N20 IOSTANDARD LVCMOS33} [get_ports ov5640_href]
 set_property -dict {PACKAGE_PIN M18 IOSTANDARD LVCMOS33} [get_ports ov5640_reset]
-set_property -dict {PACKAGE_PIN P18 IOSTANDARD LVCMOS33} [get_ports ov5640_sioc]
-set_property -dict {PACKAGE_PIN M19 IOSTANDARD LVCMOS33} [get_ports ov5640_siod]
+set_property -dict {PACKAGE_PIN P18 IOSTANDARD LVCMOS33 PULLUP true} [get_ports ov5640_sioc]
+set_property -dict {PACKAGE_PIN M19 IOSTANDARD LVCMOS33 PULLUP true} [get_ports ov5640_siod]
 set_property -dict {PACKAGE_PIN M20 IOSTANDARD LVCMOS33} [get_ports {ov5640_data[0]}]
 set_property -dict {PACKAGE_PIN L16 IOSTANDARD LVCMOS33} [get_ports {ov5640_data[1]}]
 set_property -dict {PACKAGE_PIN L17 IOSTANDARD LVCMOS33} [get_ports {ov5640_data[2]}]
@@ -36,7 +36,7 @@ set_property -dict {PACKAGE_PIN H20 IOSTANDARD LVCMOS33} [get_ports {ov5640_data
 set_property -dict {PACKAGE_PIN J20 IOSTANDARD LVCMOS33} [get_ports ov5640_pclk]
 set_property -dict {PACKAGE_PIN G19 IOSTANDARD LVCMOS33} [get_ports ov5640_pwdn]
 
-# J18, K18: 미사용 (XCLK는 카메라 모듈 내부 오실레이터)
+# J18, K18: 미연결 (카메라 모듈에 XCLK 핀 없음, 모듈 내부 오실레이터)
 
 # PCLK은 non-SRCC 핀(J20)이므로 BUFG 경로 허용
 set_property CLOCK_DEDICATED_ROUTE FALSE [get_nets ov5640_pclk_IBUF]

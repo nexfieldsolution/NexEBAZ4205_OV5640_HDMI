@@ -1,5 +1,5 @@
 `timescale 1ns / 1ps
-
+`define DEBUG
 // NexEBAZ4205_OV5640_HDMI
 // EBAZ4205 + hellofpga IO board + OV5640 DVP → HDMI output
 // CLK: 50MHz (N18), Display: 640x480 @25MHz → rgb2dvi → HDMI
@@ -27,11 +27,9 @@ module top_ov5640_hdmi (
 );
 
     wire clk_25;
-    wire config_done;
-
-    assign ov5640_pwdn  = 1'b0;  // normal operation
-    assign ov5640_reset = 1'b1;  // normal (active low reset deasserted)
-    assign UART_TX      = 1'b1;  // idle
+    (* MARK_DEBUG = "true" *) wire config_done;
+    assign UART_TX   = 1'b1;   // idle
+    assign ov5640_xclk = clk_25;  // 25MHz master clock to OV5640
 
     // Clock: 50MHz → 25MHz
     clocking u_clocking (
@@ -39,6 +37,10 @@ module top_ov5640_hdmi (
         .CLK_25 (clk_25)
     );
 
+ `ifdef DEBUG   
+    (* MARK_DEBUG = "true" *) reg clk12_5_dbg = 0;
+    always @(posedge clk_25) clk12_5_dbg <= ~clk12_5_dbg;
+ `endif 
     // Camera active detection (vsync timeout ~2.68s @ 25MHz)
     reg vsync_s1 = 0, vsync_s2 = 0, vsync_s3 = 0;
     always @(posedge clk_25) begin
@@ -55,14 +57,54 @@ module top_ov5640_hdmi (
         else if (!cam_timeout[25])
             cam_timeout <= cam_timeout + 1;
     end
-    wire camera_active = ~cam_timeout[25];
+    (* MARK_DEBUG = "true" *) wire camera_active = ~cam_timeout[25];
+
+    // OV5640 power-up sequence (25MHz)
+    // PWDN: active HIGH  (1=powerdown,  0=normal)
+    // RESET: active LOW  (0=in-reset,   1=normal)
+    //   0~ 1ms : PWDN=1, RESET=0  — full shutdown
+    //   1~ 2ms : PWDN=0, RESET=0  — exit powerdown, reset held
+    //   2~16ms : PWDN=0, RESET=1  — camera boots (needs >8192 XCLK ≈ 0.34ms @ 24MHz)
+    //   16ms+  : I2C starts
+    reg [19:0] pwrseq_cnt = 20'd0;
+`ifdef DEBUG
+    (* MARK_DEBUG = "true" *) wire dbg_soft_reset;
+    vio_0 u_vio (
+        .clk       (clk_25),
+        .probe_out0(dbg_soft_reset)
+    );
+    // VIO soft reset: pwrseq_cnt를 0으로 되돌려 PWDN/RESET 타이밍 포함 전체 재시작
+    always @(posedge clk_25) begin
+        if (dbg_soft_reset)
+            pwrseq_cnt <= 20'd0;
+        else if (pwrseq_cnt != 20'hFFFFF)
+            pwrseq_cnt <= pwrseq_cnt + 1;
+    end
+`else
+    always @(posedge clk_25)
+        if (pwrseq_cnt != 20'hFFFFF) pwrseq_cnt <= pwrseq_cnt + 1;
+`endif
+
+    assign ov5640_pwdn  = (pwrseq_cnt < 20'd25000);   // HIGH for first 1ms
+    assign ov5640_reset = (pwrseq_cnt >= 20'd50000);   // HIGH after 2ms
+    wire   pwrseq_done  = (pwrseq_cnt >= 20'd400000);  // done after ~16ms
+
+    // I2C reset: held HIGH during power-up, then pulses HIGH for 128 cycles
+    reg [7:0] i2c_rst_cnt = 8'd0;
+    always @(posedge clk_25) begin
+        if (!pwrseq_done)
+            i2c_rst_cnt <= 8'd0;
+        else if (!i2c_rst_cnt[7])
+            i2c_rst_cnt <= i2c_rst_cnt + 1;
+    end
+    wire i2c_rst = !pwrseq_done | !i2c_rst_cnt[7];
 
     // I2C config (OV5640 register init)
     wire [9:0]  lut_index;
     wire [31:0] lut_data;
 
     i2c_config u_i2c_config (
-        .rst            (1'b0),
+        .rst            (i2c_rst),
         .clk            (clk_25),
         .clk_div_cnt    (16'd63),   // SCL ≈ 100kHz @ 25MHz
         .i2c_addr_2byte (1'b1),

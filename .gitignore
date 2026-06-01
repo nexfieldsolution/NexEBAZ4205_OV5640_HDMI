@@ -15,3 +15,8 @@ usage_statistics_webtalk.html
 usage_statistics_webtalk.xml
 webtalk.log
 webtalk.jou
+
+# Verilator build outputs
+vivado/verilator/obj_dir/
+vivado/verilator/logs/
+vivado/verilator/sub.v

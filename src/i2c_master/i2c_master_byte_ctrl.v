@@ -152,7 +152,7 @@ module i2c_master_byte_ctrl (
 		.cmd     ( core_cmd ),
 		.cmd_ack ( core_ack ),
 		.busy    ( i2c_busy ),
-		.al      ( i2c_al   ),
+		.i2c_al  ( i2c_al   ),
 		.din     ( core_txd ),
 		.dout    ( core_rxd ),
 		.scl_i   ( scl_i    ),

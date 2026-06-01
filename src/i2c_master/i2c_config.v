@@ -25,6 +25,10 @@ assign i2c_sda = ~sda_padoen_o ? sda_pad_o : 1'bz;
 assign scl_pad_i = i2c_scl;
 assign i2c_scl = ~scl_padoen_o ? scl_pad_o : 1'bz;
 
+(* MARK_DEBUG = "true" *) wire scl_dbg = ~scl_padoen_o ? scl_pad_o : 1'b1;
+(* MARK_DEBUG = "true" *) wire sda_dbg = ~sda_padoen_o ? sda_pad_o : 1'b1;
+(* MARK_DEBUG = "true" *) wire sda_actual = sda_pad_i;
+
 reg i2c_read_req;
 wire i2c_read_req_ack;
 reg i2c_write_req;

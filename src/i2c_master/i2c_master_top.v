@@ -75,9 +75,11 @@ begin
 				next_state <= S_IDLE;
 		//Write I2C device address
 		S_WR_DEV_ADDR:
-			if(done && irxack)
-				next_state <= S_WR_ERR_NACK;
-			else if(done)
+			// SCCB: 9th bit is "don't care" — slave may not pull SDA low, ignore irxack
+			// if(done && irxack)
+			// 	next_state <= S_WR_ERR_NACK;
+			// else
+			if(done)
 				next_state <= S_WR_REG_ADDR;
 			else
 				next_state <= S_WR_DEV_ADDR;

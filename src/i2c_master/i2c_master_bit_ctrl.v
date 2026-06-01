@@ -151,7 +151,7 @@ module i2c_master_bit_ctrl (
     input      [ 3:0] cmd,      // command (from byte controller)
     output reg        cmd_ack,  // command complete acknowledge
     output reg        busy,     // i2c bus busy
-    output reg        al,       // i2c bus arbitration lost
+    output reg        i2c_al,   // i2c bus arbitration lost
 
     input             din,
     output reg        dout,
@@ -347,13 +347,17 @@ module i2c_master_bit_ctrl (
 
     always @(posedge clk or negedge nReset)
       if (~nReset)
-          al <= #1 1'b0;
+          i2c_al <= #1 1'b0;
       else if (rst)
-          al <= #1 1'b0;
+          i2c_al <= #1 1'b0;
       else
-          al <= #1 (sda_chk & ~sSDA & sda_oen) | (|c_state & sto_condition & ~cmd_stop);
+          i2c_al <= #1 (sda_chk & ~sSDA & sda_oen) | (|c_state & sto_condition & ~cmd_stop);
 
+    // Ignore AL error      
+    // always @(posedge clk )
+    //     i2c_al <= #1 1'b0;
 
+    
     // generate dout signal (store SDA on rising edge of SCL)
     always @(posedge clk)
       if (sSCL & ~dSCL) dout <= #1 sSDA;
@@ -390,7 +394,7 @@ module i2c_master_bit_ctrl (
           sda_oen <= #1 1'b1;
           sda_chk <= #1 1'b0;
       end
-      else if (rst | al)
+      else if (rst | i2c_al)
       begin
           c_state <= #1 idle;
           cmd_ack <= #1 1'b0;
