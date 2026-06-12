@@ -37,10 +37,17 @@ module top_ov5640_hdmi (
         .CLK_25 (clk_25)
     );
 
- `ifdef DEBUG   
+ `ifdef DEBUG
     (* MARK_DEBUG = "true" *) reg clk12_5_dbg = 0;
     always @(posedge clk_25) clk12_5_dbg <= ~clk12_5_dbg;
- `endif 
+
+    // pclk 주파수 측정: clk25 ILA에서 두 시점의 값 차이로 역산
+    // 예) 1초 간격 두 캡처에서 차이가 N이면 pclk = N Hz
+    // 예) 25M clk25 사이클 동안 카운터 변화량 M이면 pclk = M × 25M/25M = M Hz
+    reg [25:0] pclk_cnt = 26'd0;
+    always @(posedge ov5640_pclk) pclk_cnt <= pclk_cnt + 1;
+    (* MARK_DEBUG = "true" *) wire [25:0] dbg_pclk_cnt = pclk_cnt;
+ `endif
     // Camera active detection (vsync timeout ~2.68s @ 25MHz)
     reg vsync_s1 = 0, vsync_s2 = 0, vsync_s3 = 0;
     always @(posedge clk_25) begin
@@ -85,8 +92,13 @@ module top_ov5640_hdmi (
         if (pwrseq_cnt != 20'hFFFFF) pwrseq_cnt <= pwrseq_cnt + 1;
 `endif
 
-    assign ov5640_pwdn  = (pwrseq_cnt < 20'd25000);   // HIGH for first 1ms
-    assign ov5640_reset = (pwrseq_cnt >= 20'd50000);   // HIGH after 2ms
+`ifdef DEBUG
+    assign ov5640_pwdn  = (pwrseq_cnt < 20'd25000);
+    assign ov5640_reset = ~dbg_soft_reset;
+`else
+    assign ov5640_pwdn  = (pwrseq_cnt < 20'd25000);
+    assign ov5640_reset = (pwrseq_cnt >= 20'd50000);
+`endif
     wire   pwrseq_done  = (pwrseq_cnt >= 20'd400000);  // done after ~16ms
 
     // I2C reset: held HIGH during power-up, then pulses HIGH for 128 cycles
@@ -127,6 +139,12 @@ module top_ov5640_hdmi (
     wire [18:0] wr_addr;
     wire [11:0] wr_data;  // RGB444: [11:8]=R [7:4]=G [3:0]=B
     wire        wren;
+
+`ifdef DEBUG
+    (* MARK_DEBUG = "true" *) wire dbg_wren  = wren;           // BRAM write enable — never HIGH → capture 불량
+    (* MARK_DEBUG = "true" *) wire dbg_href  = ov5640_href;    // 라인 활성 — never HIGH → 카메라 신호 없음
+    (* MARK_DEBUG = "true" *) wire dbg_vsync = ov5640_vsync;   // 프레임 동기
+`endif
 
     ov5640_capture u_capture (
         .pclk  (ov5640_pclk),

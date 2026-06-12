@@ -75,7 +75,8 @@ module display(
 
         hs_out <= ~((hCounter >= hStartSync) && (hCounter < hEndSync));
         vs_out <= ~((vCounter >= vStartSync) && (vCounter < vEndSync));
-        de_out <= (hCounter < hRez) && (vCounter < vRez);
+        // de_out <= (hCounter < hRez) && (vCounter < vRez);  // 원본: HDMI에서 1클럭 오프셋 발생
+        de_out <= (hCounter < hRez - 1) && (vCounter < vRez);
 
         if (hCounter < hRez && vCounter < vRez) begin
             if (!camera_active) begin

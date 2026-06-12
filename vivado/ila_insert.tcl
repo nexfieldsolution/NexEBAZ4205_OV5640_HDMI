@@ -33,12 +33,12 @@ connect_debug_port u_ila_0/probe2 [get_nets u_i2c_config/sda_actual]
 # --- probe3: vsync ---
 create_debug_port u_ila_0 probe
 set_property port_width 1 [get_debug_ports u_ila_0/probe3]
-connect_debug_port u_ila_0/probe3 [get_nets ov5640_vsync_IBUF]
+connect_debug_port u_ila_0/probe3 [get_nets dbg_vsync]
 
 # --- probe4: href ---
 create_debug_port u_ila_0 probe
 set_property port_width 1 [get_debug_ports u_ila_0/probe4]
-connect_debug_port u_ila_0/probe4 [get_nets ov5640_href_IBUF]
+connect_debug_port u_ila_0/probe4 [get_nets dbg_href]
 
 # --- probe5: camera_active ---
 create_debug_port u_ila_0 probe
@@ -49,6 +49,12 @@ connect_debug_port u_ila_0/probe5 [get_nets camera_active]
 create_debug_port u_ila_0 probe
 set_property port_width 1 [get_debug_ports u_ila_0/probe6]
 connect_debug_port u_ila_0/probe6 [get_nets clk12_5_dbg]
+
+# --- probe7: wren (BRAM write enable, pclk domain) ---
+create_debug_port u_ila_0 probe
+set_property port_width 1 [get_debug_ports u_ila_0/probe7]
+connect_debug_port u_ila_0/probe7 [get_nets dbg_wren]
+
 
 
 set_property C_CLK_INPUT_FREQ_HZ 25000000 [get_debug_cores dbg_hub]

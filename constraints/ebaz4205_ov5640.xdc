@@ -21,6 +21,7 @@ set_property -dict {PACKAGE_PIN B19 IOSTANDARD TMDS_33} [get_ports {HDMI_P[2]}]
 # OV5640 - hellofpga IO board 20-pin camera connector
 # connector(FPGA) ↔ camera signal
 set_property -dict {PACKAGE_PIN M17 IOSTANDARD LVCMOS33} [get_ports ov5640_vsync]
+
 set_property -dict {PACKAGE_PIN N20 IOSTANDARD LVCMOS33} [get_ports ov5640_href]
 set_property -dict {PACKAGE_PIN M18 IOSTANDARD LVCMOS33} [get_ports ov5640_reset]
 set_property -dict {PACKAGE_PIN P18 IOSTANDARD LVCMOS33 PULLUP true} [get_ports ov5640_sioc]
@@ -38,5 +39,10 @@ set_property -dict {PACKAGE_PIN G19 IOSTANDARD LVCMOS33} [get_ports ov5640_pwdn]
 
 # J18, K18: 미연결 (카메라 모듈에 XCLK 핀 없음, 모듈 내부 오실레이터)
 
-# PCLK은 non-SRCC 핀(J20)이므로 BUFG 경로 허용
+# PCLK: non-SRCC 핀(J20), LUT 기준 84MHz (period=11.905ns)
+# create_clock이 없으면 pclk 도메인 1072개 FF이 unconstrained → 타이밍 미검사
+create_clock -period 11.905 -name pclk [get_ports ov5640_pclk]
 set_property CLOCK_DEDICATED_ROUTE FALSE [get_nets ov5640_pclk_IBUF]
+
+# pclk ↔ clk25: 비동기 클럭 도메인, CDC 경로 timing 검사 제외
+set_clock_groups -asynchronous -group [get_clocks pclk] -group [get_clocks clk25_buf]

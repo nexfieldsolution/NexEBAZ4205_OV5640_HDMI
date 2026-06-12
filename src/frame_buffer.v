@@ -14,6 +14,13 @@ module frame_buffer (
 );
     reg [11:0] mem [0:131071];
 
+    // TEST: pre-fill with blue (12'h00F) — remove after verifying display pipeline
+    integer i;
+    initial begin
+        for (i = 0; i < 131072; i = i + 1)
+            mem[i] = 12'h00F;
+    end
+
     always @(posedge clka) begin
         if (wea[0])
             mem[addra] <= dina;

@@ -33,8 +33,12 @@ module ov5640_capture(
 
     wire in_crop = (h_pixel >= H_CROP_START) && (h_pixel < H_CROP_END);
 
+    // When byte_cnt==1: d=high_byte(BBBBBGGG), d_latch[15:8]=low_byte(GGGRRRRR)
+    // Non-blocking d_latch update hasn't happened yet, so use {d, d_latch[15:8]} directly
+    wire [15:0] pix16 = {d, d_latch[15:8]};
+
     always @(posedge pclk) begin
-        if (vsync) begin
+        if (vsync) begin  // vsync HIGH = blanking → reset counters
             h_pixel  <= 11'd0;
             h_sub    <=  2'd0;
             v_sub    <=  2'd0;
@@ -49,8 +53,8 @@ module ov5640_capture(
             if (byte_cnt == 1'b1) begin
                 // 2바이트 수신 완료 → 픽셀 완성
                 if (in_crop && h_sub == 2'd0 && v_sub == 2'd0) begin
-                    // R: d_latch[4:1], G: d_latch[10:7], B: d_latch[15:12]
-                    dout_reg <= {d_latch[4:1], d_latch[10:7], d_latch[15:12]};
+                    // pix16={high(BBBBBGGG),low(GGGRRRRR)}: R=[4:1], G=[10:7], B=[15:12]
+                    dout_reg <= {pix16[4:1], pix16[10:7], pix16[15:12]};
                     we_reg   <= 1'b1;
                     addr_reg <= addr_reg + 1'b1;
                 end else begin
