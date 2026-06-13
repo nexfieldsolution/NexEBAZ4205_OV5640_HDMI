@@ -23,7 +23,9 @@ set_property -dict {PACKAGE_PIN B19 IOSTANDARD TMDS_33} [get_ports {HDMI_P[2]}]
 set_property -dict {PACKAGE_PIN M17 IOSTANDARD LVCMOS33} [get_ports ov5640_vsync]
 
 set_property -dict {PACKAGE_PIN N20 IOSTANDARD LVCMOS33} [get_ports ov5640_href]
-set_property -dict {PACKAGE_PIN M18 IOSTANDARD LVCMOS33} [get_ports ov5640_reset]
+#set_property -dict {PACKAGE_PIN M18 IOSTANDARD LVCMOS33} [get_ports ov5640_reset]
+# connector NC pin → jumper to camera RST pin
+set_property -dict {PACKAGE_PIN G20 IOSTANDARD LVCMOS33} [get_ports ov5640_reset] 
 set_property -dict {PACKAGE_PIN P18 IOSTANDARD LVCMOS33 PULLUP true} [get_ports ov5640_sioc]
 set_property -dict {PACKAGE_PIN M19 IOSTANDARD LVCMOS33 PULLUP true} [get_ports ov5640_siod]
 set_property -dict {PACKAGE_PIN M20 IOSTANDARD LVCMOS33} [get_ports {ov5640_data[0]}]
@@ -37,6 +39,7 @@ set_property -dict {PACKAGE_PIN H20 IOSTANDARD LVCMOS33} [get_ports {ov5640_data
 set_property -dict {PACKAGE_PIN J20 IOSTANDARD LVCMOS33} [get_ports ov5640_pclk]
 set_property -dict {PACKAGE_PIN G19 IOSTANDARD LVCMOS33} [get_ports ov5640_pwdn]
 
+# G20: ov5640_reset (connector NC pin → jumper to camera RST pin)
 # J18, K18: 미연결 (카메라 모듈에 XCLK 핀 없음, 모듈 내부 오실레이터)
 
 # PCLK: non-SRCC 핀(J20), LUT 기준 84MHz (period=11.905ns)
