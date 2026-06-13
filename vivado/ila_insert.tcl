@@ -34,6 +34,8 @@ connect_debug_port u_ila_0/probe2 [get_nets u_i2c_config/sda_actual]
 create_debug_port u_ila_0 probe
 set_property port_width 1 [get_debug_ports u_ila_0/probe3]
 connect_debug_port u_ila_0/probe3 [get_nets dbg_vsync]
+#connect_debug_port u_ila_0/probe3 [get_nets ov5640_vsync_IBUF]
+
 
 # --- probe4: href ---
 create_debug_port u_ila_0 probe

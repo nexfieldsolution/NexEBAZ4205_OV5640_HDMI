@@ -7,9 +7,11 @@ always@(*)
 begin
 	case(lut_index)			  
 	    10'd  0: lut_data <= {8'h78 , 24'h310311};// system clock from pad, bit[1]
-	    10'd  1: lut_data <= {8'h78 , 24'h300882};// software reset, bit[7]// delay 5ms 
+	    // 10'd  1: lut_data <= {8'h78 , 24'h300882};// software reset, bit[7]// delay 5ms 
+		10'd  1: lut_data <= {8'h78 , 24'h310311};//  // 더미 (system control, 무해) => duty가 50% 로 된다...  reset 안했더니...
 	    10'd  2: lut_data <= {8'h78 , 24'h300842};// software power down, bit[6]
-	    10'd  3: lut_data <= {8'h78 , 24'h310303};// system clock from PLL, bit[1]
+	    //10'd  3: lut_data <= {8'h78 , 24'h310303};// system clock from PLL, bit[1]
+	    10'd  3: lut_data <= {8'h78 , 24'h310313};// system clock from PLL + XCLK as PLL ref (bit[4]=1)
 	    10'd  4: lut_data <= {8'h78 , 24'h3017ff};// FREX, Vsync, HREF, PCLK, D[9:6] output enable
 	    10'd  5: lut_data <= {8'h78 , 24'h3018ff};// D[5:0], GPIO[1:0] output enable
 	    10'd  6: lut_data <= {8'h78 , 24'h30341A};// MIPI 10-bit
@@ -215,7 +217,9 @@ begin
 	    10'd206: lut_data <= {8'h78 , 24'h502500};
 	    10'd207: lut_data <= {8'h78 , 24'h300802}; // wake up from standby, bit[6]
 	    10'd208: lut_data <= {8'h78 , 24'h303521};// PLL (0x3035=0x21, same as Stage2 → no AEC disruption)
-	    10'd209: lut_data <= {8'h78 , 24'h303669};// PLL
+	    //10'd209: lut_data <= {8'h78 , 24'h303669};// PLL multiplier=105 (VCO=840MHz → over spec, PLL unlock → 4MHz)
+	    //10'd209: lut_data <= {8'h78 , 24'h303654};// PLL multiplier=84 (VCO=560MHz@20MHz → below min VCO → RC fallback)
+	    10'd209: lut_data <= {8'h78 , 24'h30367E};// PLL multiplier=126 (PCLK=20MHz target, empirical from 84→13.333MHz)
 	    10'd210: lut_data <= {8'h78 , 24'h3c0708};// light meter 1 threshold [7:0]
 	    10'd211: lut_data <= {8'h78 , 24'h382047};// Sensor flip off, ISP flip on
 	    10'd212: lut_data <= {8'h78 , 24'h382101};// Sensor mirror on, ISP mirror on, H binning on
@@ -259,7 +263,9 @@ begin
 	    10'd250: lut_data <= {8'h78 , 24'h350300}; // AEC/AGC on 
 	    // --- Stage 2: switch PLL to 1280x720 (PCLK=84MHz) ---
 	    10'd251: lut_data <= {8'h78 , 24'h303521};// PLL: input=24MHz, PCLK=84MHz
-	    10'd252: lut_data <= {8'h78 , 24'h303669};// PLL
+	    //10'd252: lut_data <= {8'h78 , 24'h303669};// PLL multiplier=105 (VCO=840MHz → over spec)
+	    //10'd252: lut_data <= {8'h78 , 24'h303654};// PLL multiplier=84 (VCO=560MHz@20MHz → below min VCO → RC fallback)
+	    10'd252: lut_data <= {8'h78 , 24'h30367E};// PLL multiplier=126
 	    10'd253: lut_data <= {8'h78 , 24'h3c0707};// light meter 1 threshold[7:0]
 	    10'd254: lut_data <= {8'h78 , 24'h382047};// flip
 	    10'd255: lut_data <= {8'h78 , 24'h382101};// mirror

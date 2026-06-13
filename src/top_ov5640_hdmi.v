@@ -143,7 +143,8 @@ module top_ov5640_hdmi (
 `ifdef DEBUG
     (* MARK_DEBUG = "true" *) wire dbg_wren  = wren;           // BRAM write enable — never HIGH → capture 불량
     (* MARK_DEBUG = "true" *) wire dbg_href  = ov5640_href;    // 라인 활성 — never HIGH → 카메라 신호 없음
-    (* MARK_DEBUG = "true" *) wire dbg_vsync = ov5640_vsync;   // 프레임 동기
+    //(* MARK_DEBUG = "true" *) wire dbg_vsync = ov5640_vsync;   // 이전: 주석 처리 → net 이름 ov5640_vsync_IBUF 유지 (ila_insert.tcl과 매칭)
+    (* MARK_DEBUG = "true" *) wire dbg_vsync = ov5640_vsync;   // 실험: MARK_DEBUG 활성 → net 이름 dbg_vsync → ov5640_vsync_IBUF 소실
 `endif
 
     ov5640_capture u_capture (
