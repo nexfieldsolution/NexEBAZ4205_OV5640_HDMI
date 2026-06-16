@@ -4,7 +4,7 @@
 
 # --- ILA core ---
 create_debug_core u_ila_0 ila
-set_property C_DATA_DEPTH        131072 [get_debug_cores u_ila_0]
+set_property C_DATA_DEPTH        8192 [get_debug_cores u_ila_0]
 set_property C_TRIGIN_EN         false [get_debug_cores u_ila_0]
 set_property C_TRIGOUT_EN        false [get_debug_cores u_ila_0]
 set_property C_ADV_TRIGGER       false [get_debug_cores u_ila_0]
@@ -58,6 +58,11 @@ set_property port_width 1 [get_debug_ports u_ila_0/probe7]
 connect_debug_port u_ila_0/probe7 [get_nets dbg_wren]
 
 
+
+# --- probe8: pclk_cnt (26-bit, clk_25로 비동기 샘플 — pclk fabric 도달 확인용) ---
+create_debug_port u_ila_0 probe
+set_property port_width 26 [get_debug_ports u_ila_0/probe8]
+connect_debug_port u_ila_0/probe8 [get_nets {dbg_pclk_cnt[*]}]
 
 set_property C_CLK_INPUT_FREQ_HZ 25000000 [get_debug_cores dbg_hub]
 

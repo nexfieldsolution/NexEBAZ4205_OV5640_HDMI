@@ -39,6 +39,8 @@ EBAZ4205 + hellofpga IO board + OV5640 camera → HDMI output
 
 ### OV5640 (hellofpga IO board 20-pin camera connector)
 
+## ov5640_reset 핀은 M18 => G20으로 JUMPER 함 
+
 | Signal          | Pin | IOSTANDARD | Description         |
 |-----------------|-----|------------|---------------------|
 | ov5640_pclk     | J20 | LVCMOS33   | Pixel clock         |
@@ -54,5 +56,5 @@ EBAZ4205 + hellofpga IO board + OV5640 camera → HDMI output
 | ov5640_data[7]  | H20 | LVCMOS33   | Pixel data bit 7    |
 | ov5640_sioc     | P18 | LVCMOS33   | I2C SCL             |
 | ov5640_siod     | M19 | LVCMOS33   | I2C SDA             |
-| ov5640_reset    | M18 | LVCMOS33   | Reset (active low)  |
+| ov5640_reset    | G20 | LVCMOS33   | Reset (active low)  |
 | ov5640_pwdn     | G19 | LVCMOS33   | Power down (active high) |

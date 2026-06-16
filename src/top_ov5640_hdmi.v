@@ -37,6 +37,10 @@ module top_ov5640_hdmi (
         .CLK_25 (clk_25)
     );
 
+    // BUFG: J20(non-SRCC) pclk를 global clock network으로 승격
+    wire pclk_buf;
+    BUFG u_pclk_buf (.I(ov5640_pclk), .O(pclk_buf));
+
  `ifdef DEBUG
     (* MARK_DEBUG = "true" *) reg clk12_5_dbg = 0;
     always @(posedge clk_25) clk12_5_dbg <= ~clk12_5_dbg;
@@ -44,9 +48,9 @@ module top_ov5640_hdmi (
     // pclk 주파수 측정: clk25 ILA에서 두 시점의 값 차이로 역산
     // 예) 1초 간격 두 캡처에서 차이가 N이면 pclk = N Hz
     // 예) 25M clk25 사이클 동안 카운터 변화량 M이면 pclk = M × 25M/25M = M Hz
-    reg [25:0] pclk_cnt = 26'd0;
-    always @(posedge ov5640_pclk) pclk_cnt <= pclk_cnt + 1;
-    (* MARK_DEBUG = "true" *) wire [25:0] dbg_pclk_cnt = pclk_cnt;
+    (* KEEP = "true" *) reg [25:0] pclk_cnt = 26'd0;
+    always @(posedge pclk_buf) pclk_cnt <= pclk_cnt + 1;
+    (* KEEP = "true" *) wire [25:0] dbg_pclk_cnt = pclk_cnt;
  `endif
     // Camera active detection (vsync timeout ~2.68s @ 25MHz)
     reg vsync_s1 = 0, vsync_s2 = 0, vsync_s3 = 0;
@@ -149,7 +153,7 @@ module top_ov5640_hdmi (
 `endif
 
     ov5640_capture u_capture (
-        .pclk  (ov5640_pclk),
+        .pclk  (pclk_buf),
         .vsync (ov5640_vsync),
         .href  (ov5640_href),
         .d     (ov5640_data),
@@ -163,7 +167,7 @@ module top_ov5640_hdmi (
     wire [11:0] rd_data;
 
     frame_buffer u_frame_buffer (
-        .clka  (ov5640_pclk),
+        .clka  (pclk_buf),
         .wea   (wren),
         .addra (wr_addr[16:0]),
         .dina  (wr_data),
