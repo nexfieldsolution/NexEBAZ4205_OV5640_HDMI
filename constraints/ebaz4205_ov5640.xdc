@@ -36,16 +36,16 @@ set_property -dict {PACKAGE_PIN L20 IOSTANDARD LVCMOS33} [get_ports {ov5640_data
 set_property -dict {PACKAGE_PIN J19 IOSTANDARD LVCMOS33} [get_ports {ov5640_data[5]}]
 set_property -dict {PACKAGE_PIN K19 IOSTANDARD LVCMOS33} [get_ports {ov5640_data[6]}]
 set_property -dict {PACKAGE_PIN H20 IOSTANDARD LVCMOS33} [get_ports {ov5640_data[7]}]
-set_property -dict {PACKAGE_PIN J20 IOSTANDARD LVCMOS33} [get_ports ov5640_pclk]
+set_property -dict {PACKAGE_PIN J18 IOSTANDARD LVCMOS33} [get_ports ov5640_pclk]
 set_property -dict {PACKAGE_PIN G19 IOSTANDARD LVCMOS33} [get_ports ov5640_pwdn]
 
 # G20: ov5640_reset (connector NC pin → jumper to camera RST pin)
-# J18, K18: 미연결 (카메라 모듈에 XCLK 핀 없음, 모듈 내부 오실레이터)
+# J18: PCLK (MRCC P-type, J20→J18 점퍼로 변경. 카메라 모듈 내부 오실레이터 54MHz)
+# K18: 미연결 (N-type CCIO, 단일종단 클럭 입력 불가)
 
-# PCLK: non-SRCC 핀(J20), LUT 기준 84MHz (period=11.905ns)
-# create_clock이 없으면 pclk 도메인 1072개 FF이 unconstrained → 타이밍 미검사
+# PCLK: MRCC P-type 핀(J18), BUFG 라우팅 가능 (CLOCK_DEDICATED_ROUTE 불필요)
+# create_clock이 없으면 pclk 도메인 FF이 unconstrained → 타이밍 미검사
 create_clock -period 11.905 -name pclk [get_ports ov5640_pclk]
-set_property CLOCK_DEDICATED_ROUTE FALSE [get_nets ov5640_pclk_IBUF]
 
 # pclk ↔ clk25: 비동기 클럭 도메인, CDC 경로 timing 검사 제외
 set_clock_groups -asynchronous -group [get_clocks pclk] -group [get_clocks clk25_buf]

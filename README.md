@@ -39,22 +39,24 @@ EBAZ4205 + hellofpga IO board + OV5640 camera → HDMI output
 
 ### OV5640 (hellofpga IO board 20-pin camera connector)
 
-## ov5640_reset 핀은 M18 => G20으로 JUMPER 함 
+## 하드웨어 점퍼 변경 내역
+- ov5640_reset 핀: M18 → G20 으로 JUMPER (M18 트레이스 절단)
+- ov5640_pclk 핀: J20 → J18 으로 JUMPER (J20은 non-SRCC → J18(MRCC P-type)로 변경. K18은 N-type CCIO라 불가)
 
-| Signal          | Pin | IOSTANDARD | Description         |
-|-----------------|-----|------------|---------------------|
-| ov5640_pclk     | J20 | LVCMOS33   | Pixel clock         |
-| ov5640_vsync    | M17 | LVCMOS33   | Vertical sync       |
-| ov5640_href     | N20 | LVCMOS33   | Horizontal ref      |
-| ov5640_data[0]  | M20 | LVCMOS33   | Pixel data bit 0    |
-| ov5640_data[1]  | L16 | LVCMOS33   | Pixel data bit 1    |
-| ov5640_data[2]  | L17 | LVCMOS33   | Pixel data bit 2    |
-| ov5640_data[3]  | L19 | LVCMOS33   | Pixel data bit 3    |
-| ov5640_data[4]  | L20 | LVCMOS33   | Pixel data bit 4    |
-| ov5640_data[5]  | J19 | LVCMOS33   | Pixel data bit 5    |
-| ov5640_data[6]  | K19 | LVCMOS33   | Pixel data bit 6    |
-| ov5640_data[7]  | H20 | LVCMOS33   | Pixel data bit 7    |
-| ov5640_sioc     | P18 | LVCMOS33   | I2C SCL             |
-| ov5640_siod     | M19 | LVCMOS33   | I2C SDA             |
-| ov5640_reset    | G20 | LVCMOS33   | Reset (active low)  |
+| Signal          | Pin | IOSTANDARD | Description                    |
+|-----------------|-----|------------|--------------------------------|
+| ov5640_pclk     | J18 | LVCMOS33   | Pixel clock (MRCC P-type, 54MHz)|
+| ov5640_vsync    | M17 | LVCMOS33   | Vertical sync            |
+| ov5640_href     | N20 | LVCMOS33   | Horizontal ref           |
+| ov5640_data[0]  | M20 | LVCMOS33   | Pixel data bit 0         |
+| ov5640_data[1]  | L16 | LVCMOS33   | Pixel data bit 1         |
+| ov5640_data[2]  | L17 | LVCMOS33   | Pixel data bit 2         |
+| ov5640_data[3]  | L19 | LVCMOS33   | Pixel data bit 3         |
+| ov5640_data[4]  | L20 | LVCMOS33   | Pixel data bit 4         |
+| ov5640_data[5]  | J19 | LVCMOS33   | Pixel data bit 5         |
+| ov5640_data[6]  | K19 | LVCMOS33   | Pixel data bit 6         |
+| ov5640_data[7]  | H20 | LVCMOS33   | Pixel data bit 7         |
+| ov5640_sioc     | P18 | LVCMOS33   | I2C SCL                  |
+| ov5640_siod     | M19 | LVCMOS33   | I2C SDA                  |
+| ov5640_reset    | G20 | LVCMOS33   | Reset (active low)       |   (OV5640 모듈의 ㅡ18 핀을 끊고, IO보드의 G18 로 점프함)
 | ov5640_pwdn     | G19 | LVCMOS33   | Power down (active high) |
