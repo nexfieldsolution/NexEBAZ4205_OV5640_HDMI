@@ -64,6 +64,11 @@ create_debug_port u_ila_0 probe
 set_property port_width 26 [get_debug_ports u_ila_0/probe8]
 connect_debug_port u_ila_0/probe8 [get_nets {dbg_pclk_cnt[*]}]
 
+# --- probe9: ov5640_data raw byte (pclk domain reg, clk_25 ILA로 크로스 샘플 — byte 값/순서 확인용) ---
+create_debug_port u_ila_0 probe
+set_property port_width 8 [get_debug_ports u_ila_0/probe9]
+connect_debug_port u_ila_0/probe9 [get_nets {dbg_data[*]}]
+
 set_property C_CLK_INPUT_FREQ_HZ 25000000 [get_debug_cores dbg_hub]
 
 implement_debug_core

@@ -45,7 +45,7 @@ set_property -dict {PACKAGE_PIN G19 IOSTANDARD LVCMOS33} [get_ports ov5640_pwdn]
 
 # PCLK: MRCC P-type 핀(J18), BUFG 라우팅 가능 (CLOCK_DEDICATED_ROUTE 불필요)
 # create_clock이 없으면 pclk 도메인 FF이 unconstrained → 타이밍 미검사
-create_clock -period 11.905 -name pclk [get_ports ov5640_pclk]
+create_clock -period 18.519 -name pclk [get_ports ov5640_pclk]
 
 # pclk ↔ clk25: 비동기 클럭 도메인, CDC 경로 timing 검사 제외
 set_clock_groups -asynchronous -group [get_clocks pclk] -group [get_clocks clk25_buf]

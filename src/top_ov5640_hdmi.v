@@ -150,6 +150,7 @@ module top_ov5640_hdmi (
     (* MARK_DEBUG = "true" *) wire dbg_href  = ov5640_href;    // 라인 활성 — never HIGH → 카메라 신호 없음
     //(* MARK_DEBUG = "true" *) wire dbg_vsync = ov5640_vsync;   // 이전: 주석 처리 → net 이름 ov5640_vsync_IBUF 유지 (ila_insert.tcl과 매칭)
     (* MARK_DEBUG = "true" *) wire dbg_vsync = ov5640_vsync;   // 실험: MARK_DEBUG 활성 → net 이름 dbg_vsync → ov5640_vsync_IBUF 소실
+    (* MARK_DEBUG = "true" *)(* KEEP = "true" *) wire [7:0] dbg_data = ov5640_data;
 `endif
 
     ov5640_capture u_capture (

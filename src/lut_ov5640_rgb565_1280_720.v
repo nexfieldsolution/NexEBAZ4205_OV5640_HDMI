@@ -131,7 +131,7 @@ module lut_ov5640_rgb565_1280_720(
       10'd 55:
         lut_data <= {8'h78 , 24'h302e00};
       10'd 56:
-        lut_data <= {8'h78 , 24'h430060};// RGB565
+        lut_data <= {8'h78 , 24'h430060};// [7:4] = 6 -> RGB565, [3:0] = 0 -> b[4:0] g[5:3] , [g2:0] r[4:0] 순서다. RGB565포맷이자만 순서는 BGR565로 설정됨
       10'd 57:
         lut_data <= {8'h78 , 24'h501f01};// ISP RGB
       10'd 58:
@@ -435,9 +435,9 @@ module lut_ov5640_rgb565_1280_720(
       10'd207:
         lut_data <= {8'h78 , 24'h300802}; // wake up from standby, bit[6]
 `ifdef USE_20MHz_XTAL
-
+      // PLL 설정: 20MHz 입력에서 54MHz PCLK (30fps)
       10'd208:
-        lut_data <= {8'h78 , 24'h303521};// PLL: sys_div=2, MIPI div=1
+        lut_data <= {8'h78 , 24'h303521};// PLL: input=20MHz, PCLK=54MHz  sys_div=2, MIPI div=1
       10'd209:
         lut_data <= {8'h78 , 24'h30365A};// PLL: N multiplier=90 (XCLK 20MHz -> 30fps)
 `else
@@ -657,6 +657,23 @@ module lut_ov5640_rgb565_1280_720(
       10'd302:
         lut_data <= {8'h78 , 24'h3b0000};// STROBE CTRL: strobe request OFF
 `endif
+      // AWB 비활성화 테스트 — 결과: 옅은 녹색+파랑/빨강 뒤바뀜, 비활성화
+      // 10'd303:
+      //   lut_data <= {8'h78, 24'h5001a2}; // ISP: AWB bit OFF (0xa3→0xa2)
+      // 10'd304:
+      //   lut_data <= {8'h78, 24'h340601}; // AWB manual gain mode
+      // 10'd305:
+      //   lut_data <= {8'h78, 24'h340004}; // R gain high = 1.0x
+      // 10'd306:
+      //   lut_data <= {8'h78, 24'h340100}; // R gain low
+      // 10'd307:
+      //   lut_data <= {8'h78, 24'h340204}; // G gain high = 1.0x
+      // 10'd308:
+      //   lut_data <= {8'h78, 24'h340300}; // G gain low
+      // 10'd309:
+      //   lut_data <= {8'h78, 24'h340404}; // B gain high = 1.0x
+      // 10'd310:
+      //   lut_data <= {8'h78, 24'h340500}; // B gain low
       default:
         lut_data <= {8'hff , 24'hffffff};
     endcase
