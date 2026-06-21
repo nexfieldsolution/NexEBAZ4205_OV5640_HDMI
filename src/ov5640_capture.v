@@ -43,6 +43,7 @@ module ov5640_capture(
   // Cycle A(byte_cnt=0): d=HIGH → d_latch[15:8]에 보관
   // Cycle B(byte_cnt=1): pix16={HIGH,LOW}={BBBBBGGG,GGGRRRRR}
   //   R=[4:1](LOW bits), G=[10:7](HIGH[2:0]+LOW[7]), B=[15:12](HIGH bits)
+  // D[2](J20=XADC VAUXP[5], 1고착) — G MSB 항상 1 = 녹색 편향 (보정 포기)
   wire [15:0] pix16 = {d_latch[15:8], d};
 
   // always @(posedge pclk)

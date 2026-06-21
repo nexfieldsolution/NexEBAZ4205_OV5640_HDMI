@@ -97,11 +97,13 @@ module top_ov5640_hdmi (
 `endif
 
 `ifdef DEBUG
-    assign ov5640_pwdn  = (pwrseq_cnt < 20'd25000);
+    assign ov5640_pwdn  = 1'b0;  // 카메라 PWDN GND 직결 → 항상 0 (dummy 출력)
+    //assign ov5640_pwdn  = (pwrseq_cnt < 20'd25000);
     //assign ov5640_reset = ~dbg_soft_reset;
     assign ov5640_reset = (pwrseq_cnt >= 20'd50000);  // VIO→pwrseq_cnt 리셋으로 시퀀스 재실행
 `else
-    assign ov5640_pwdn  = (pwrseq_cnt < 20'd25000);
+    assign ov5640_pwdn  = 1'b0;  // 카메라 PWDN GND 직결 → 항상 0 (dummy 출력)
+    //assign ov5640_pwdn  = (pwrseq_cnt < 20'd25000);
     assign ov5640_reset = (pwrseq_cnt >= 20'd50000);
 `endif
     wire   pwrseq_done  = (pwrseq_cnt >= 20'd400000);  // done after ~16ms
